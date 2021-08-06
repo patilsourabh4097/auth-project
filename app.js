@@ -4,8 +4,8 @@ const expressLayouts = require("express-ejs-layouts");
 const flash = require("connect-flash");
 const mongoose = require("mongoose");
 const passport = require("passport");
-require("./middleware/passport")(passport);
 const session = require("express-session");
+require("./middleware/passport")(passport);
 
 const app = express();
 dotenv.config();
