@@ -1,21 +1,24 @@
-const express = require('express');
-const router = express.Router()
-const usersController = require('../controller/users-controller')
+const express = require("express");
+const router = express.Router();
+const usersController = require("../controller/users-controller");
 
 //Login-page
-router.get('/login', usersController.login )
+router.get("/login", usersController.login);
 
 //Register page
-router.get('/register', usersController.register)
+router.get("/register", usersController.register);
 
 //Register handle
-router.post('/register', usersController.registerHandle);
+router.post("/register", usersController.registerHandle);
 
 //Login handle
-router.post('/login',usersController.loginHandle)
+router.post("/login", usersController.loginHandle);
 
 //logout handle
-router.get('/logout', usersController.logoutHandle)
+router.get("/logout", usersController.logoutHandle);
 
+router.get("/create-message", usersController.createMsg);
+
+router.post("/create-message", usersController.postMsg);
 
 module.exports = router;
