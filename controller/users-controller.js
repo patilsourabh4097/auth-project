@@ -16,17 +16,14 @@ exports.registerHandle = (req, res, next) => {
   const { name, email, password, password2 } = req.body;
   let errors = [];
 
-  // check required fields
   if (!name || !email || !password || !password2) {
     errors.push({ msg: "Please provide all fields" });
   }
 
-  // check password match
   if (password !== password2) {
     errors.push({ msg: "Password dont match" });
   }
 
-  //password length
   if (password.length < 6) {
     errors.push({ msg: "Password should be min 6 characters" });
   }
@@ -40,10 +37,8 @@ exports.registerHandle = (req, res, next) => {
       password2,
     });
   } else {
-    // validation passed
     User.findOne({ email: email }).then((user) => {
       if (user) {
-        //user exists
         errors.push({ msg: "Email has already registered" });
         res.render("register", {
           errors,
@@ -58,13 +53,10 @@ exports.registerHandle = (req, res, next) => {
           email,
           password,
         });
-        //hash password
         bcrypt.genSalt(10, (err, salt) =>
           bcrypt.hash(newUser.password, salt, (err, hash) => {
             if (err) throw err;
-            //set password hashed
             user.password = hash;
-            //save user
             user
               .save()
               .then((user) => {
