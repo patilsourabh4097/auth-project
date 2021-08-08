@@ -1,15 +1,18 @@
+const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
+const LocalStrategy = require("passport-local").Strategy;
 const flash = require("connect-flash");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 
-require("./middleware/passport")(passport);
+const User = require("./models/user");
 
-usersRoute = require("./routes/users")
-indexRoute = require("./routes/index")
+const authRoute = require("./routes/auth");
+const indexRoute = require("./routes/index");
+const messageRoute = require("./routes/message");
 
 const app = express();
 dotenv.config();
@@ -24,6 +27,36 @@ db.on("error", console.error.bind(console, "mongo connection error"));
 
 app.use(expressLayouts);
 app.set("view engine", "ejs");
+
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+    User.findOne({ email })
+      .then((user) => {
+        if (!user) {
+          return done(null, false, { msg: "that user is not registered" });
+        }
+        bcrypt.compare(password, user.password, (err, isMatch) => {
+          if (err) throw err;
+
+          if (isMatch) {
+            return done(null, user);
+          } else {
+            return done(null, false, { msg: "password incorrect" });
+          }
+        });
+      })
+      .catch((err) => console.log(err));
+  })
+);
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});
 
 app.use(express.urlencoded({ extended: false }));
 
@@ -48,7 +81,8 @@ app.use((req, res, next) => {
 });
 
 app.use("/", indexRoute);
-app.use("/users", usersRoute);
+app.use("/message", messageRoute);
+app.use("/auth", authRoute);
 
 PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server has started on port ${PORT}`));

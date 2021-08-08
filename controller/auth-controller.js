@@ -2,8 +2,8 @@ const bcrypt = require("bcryptjs");
 const express = require("express");
 const passport = require("passport");
 
-const Message = require("../models/Message");
-const User = require("../models/User");
+const Message = require("../models/message");
+const User = require("../models/user");
 
 exports.login = (req, res, next) => {
   const user = req.user;
@@ -88,6 +88,5 @@ exports.loginHandle = (req, res, next) => {
 exports.logoutHandle = (req, res) => {
   req.logout();
   req.flash("success_msg", "You are logged out");
-  res.redirect("/users/login");
+  res.redirect("/auth/login");
 };
-
