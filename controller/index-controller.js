@@ -1,8 +1,9 @@
 const express = require("express");
 
-exports.dash = (req, res) => {
+exports.dashboard = (req, res) => {
+  const username = req.user.name;
   res.render("dashboard", {
-    name: req.user.name,
+    name: username,
   });
   return;
 };

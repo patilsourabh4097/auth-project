@@ -1,9 +1,9 @@
-const { ensureAuthenticated } = require("../middleware/auth");
-const indexController = require("../controller/index-controller");
 const router = require("express").Router();
 
-router.get("/", indexController.welcome);
+const { ensureAuthenticated } = require("../middleware/auth");
+const indexController = require("../controller/index-controller");
 
-router.get("/dashboard", ensureAuthenticated, indexController.dash);
+router.get("/", indexController.welcome);
+router.get("/dashboard", ensureAuthenticated, indexController.dashboard);
 
 module.exports = router;

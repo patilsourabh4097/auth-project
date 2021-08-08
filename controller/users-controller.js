@@ -1,15 +1,17 @@
 const bcrypt = require("bcryptjs");
 const express = require("express");
-const Message = require("../models/Message");
 const passport = require("passport");
+
+const Message = require("../models/Message");
 const User = require("../models/User");
 
 exports.login = (req, res, next) => {
-  res.render("login", { user: req.user });
+  res.render("login", { user });
 };
 
 exports.register = (req, res, next) => {
-  res.render("register", { user: req.user });
+  const user = req.user;
+  res.render("register", { user });
 };
 
 exports.registerHandle = (req, res, next) => {
@@ -37,7 +39,7 @@ exports.registerHandle = (req, res, next) => {
       password2,
     });
   } else {
-    User.findOne({ email: email }).then((user) => {
+    User.findOne({ email }).then((user) => {
       if (user) {
         errors.push({ msg: "Email has already registered" });
         res.render("register", {
@@ -54,9 +56,9 @@ exports.registerHandle = (req, res, next) => {
           password,
         });
         bcrypt.genSalt(10, (err, salt) =>
-          bcrypt.hash(newUser.password, salt, (err, hash) => {
+          bcrypt.hash(user.password, salt, (err, hashPassword) => {
             if (err) throw err;
-            user.password = hash;
+            user.password = hashPassword;
             user
               .save()
               .then((user) => {
@@ -93,10 +95,13 @@ exports.createMsg = (req, res) => {
 };
 
 exports.postMsg = async (req, res, next) => {
+  const title = req.body.title;
+  const note = req.body.note;
+  const name = req.user.name;
   const msg = await new Message({
-    heading: req.body.title,
-    content: req.body.note,
-    username: req.user.name,
+    heading: title,
+    content: note,
+    userName: name,
   }).save((err) => {
     if (err) {
       return next(err);

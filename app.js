@@ -5,7 +5,11 @@ const flash = require("connect-flash");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
+
 require("./middleware/passport")(passport);
+
+usersRoute = require("./routes/users")
+indexRoute = require("./routes/index")
 
 const app = express();
 dotenv.config();
@@ -43,8 +47,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/", require("./routes/index"));
-app.use("/users", require("./routes/users"));
+app.use("/", indexRoute);
+app.use("/users", usersRoute);
 
 PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server has started on port ${PORT}`));
